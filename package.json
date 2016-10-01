@@ -15,5 +15,11 @@
   "bugs": {
     "url": "https://github.com/tinc2k/mechanik/issues"
   },
-  "homepage": "https://github.com/tinc2k/mechanik#readme"
+  "homepage": "https://github.com/tinc2k/mechanik#readme",
+  "dependencies": {
+    "express": "^4.14.0",
+    "graceful-fs": "^4.1.9",
+    "https": "^1.0.0",
+    "underscore": "^1.8.3"
+  }
 }
