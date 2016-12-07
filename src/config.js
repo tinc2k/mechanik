@@ -27,3 +27,12 @@ const integration = {
 const production = {
     isProduction: true,  // for config.isProduction
 };
+
+
+
+if (process.env.NODE_ENV === 'production')
+  module.exports = production;
+else if (process.env.NODE_ENV === 'integration')
+  module.exports = integration;
+else
+  module.exports = development;
