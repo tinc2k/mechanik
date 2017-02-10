@@ -1,11 +1,15 @@
 'use strict';
 
 const development = {
-  isDevelopment: true, // for config.isDevelopment
+  // for config.isDevelopment
+  isDevelopment: true,
   SERVER: {
     api_version: 0.01,
+    // enable server clustering
     cluster: true,
+    // force/redirect to HTTPS
     force_https: false
+    // certificate paths not required, as development environment doesn't run in HTTPS
   },
   REDIS: { 
     host: 'localhost',
