@@ -4,6 +4,7 @@
   "description": "",
   "main": "build/core.js",
   "scripts": {
+    "build": "rm -rf build && mkdir build && babel src --source-maps --out-dir build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -22,5 +23,8 @@
     "https": "^1.0.0",
     "underscore": "^1.8.3",
     "winston": "^2.3.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.22.2"
   }
 }
