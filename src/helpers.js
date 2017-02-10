@@ -5,6 +5,13 @@ function getRandomHex(bytes, uppercase) {
   return uppercase ? t.toUpperCase() : t;
 }
 
+function maybe(percent) {
+  if (Math.random() < percent/100)
+    return true;
+  return false;
+}
+
 module.exports = {
-  getRandomHex
+  getRandomHex,
+  maybe
 };
