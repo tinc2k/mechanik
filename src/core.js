@@ -21,7 +21,8 @@ const log = new Logger('Core'),
       KEEP_ALIVE = 300000, // 5 minutes
       JSON_LIMIT = '1mb'; // default '100kb'
 
-if (cluster.isMaster) {
+if (config.SERVER.cluster && cluster.isMaster) {
+  log.info(`Cluster mode enabled, spawning ${CPU_COUNT} workers.`);
   for (let i = 0; i < CPU_COUNT; i++) {
     cluster.fork();
   } 
@@ -55,7 +56,7 @@ if (cluster.isMaster) {
     app.use(forceHttps);
   }
 
-    // isn't this a neat little path trick?
+  // isn't this a neat little path trick?
   app.use('/static', express.static(__dirname + '/../static/'));
 
   app.get('/', logRequest, (req, res) => {
@@ -77,7 +78,7 @@ function onWorkerMessage(worker, message, handle) {
 }
 
 function onWorkerOnline(worker) {
-  log.debug(`Worker ${worker.process.pid} is online.`);
+  log.info(`Worker ${worker.process.pid} is online.`);
 }
 
 function onWorkerExit(worker, code, signal) {
