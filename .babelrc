@@ -1,4 +1,4 @@
 {
-  "presets": ["es2015", "react"],
-  "plugins": ["transform-react-jsx"]
+  "presets": ["es2017", "react"],
+  "plugins": ["transform-react-jsx", "transform-async-to-generator"]
 }
