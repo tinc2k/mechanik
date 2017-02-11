@@ -1,25 +1,29 @@
 'use strict';
 
+//require("babel-polyfill");
+
 const fs = require('graceful-fs'),
-      http = require('http'),
-      https = require('https'),
-      parser = require('body-parser'),
-      express = require('express'),
-      cluster = require('cluster'),
-      os = require('os'),
-      util = require('util');
+  http = require('http'),
+  https = require('https'),
+  parser = require('body-parser'),
+  express = require('express'),
+  cluster = require('cluster'),
+  os = require('os');
 
 const config = require('./config'),
-      enums = require('./enums'),
-      helpers = require('./helpers'),
-      Logger = require('./logger');
+  enums = require('./enums'),
+  Logger = require('./logger');
 
 const log = new Logger('Core'),
-      CPU_COUNT = os.cpus().length,
-      PORT_HTTP = config.isDevelopment ? 3000 : 80,
-      PORT_HTTPS = 443,
-      KEEP_ALIVE = 300000, // 5 minutes
-      JSON_LIMIT = '1mb'; // default '100kb'
+  CPU_COUNT = os.cpus().length,
+  PORT_HTTP = config.isDevelopment ? 3000 : 80,
+  PORT_HTTPS = 443,
+  KEEP_ALIVE = 300000, // 5 minutes
+  JSON_LIMIT = '1mb'; // default '100kb'
+
+// fake domain logic component
+const domain = require('./domain');  
+
 
 if (config.SERVER.cluster && cluster.isMaster) {
   log.info(`Cluster mode enabled, spawning ${CPU_COUNT} workers.`);
@@ -27,7 +31,7 @@ if (config.SERVER.cluster && cluster.isMaster) {
     cluster.fork();
   } 
   cluster.on('message', onWorkerMessage);
-  cluster.on('online', onWorkerOnline)
+  cluster.on('online', onWorkerOnline);
   cluster.on('exit', onWorkerExit);
 } else {
   var app = express();
@@ -46,11 +50,11 @@ if (config.SERVER.cluster && cluster.isMaster) {
   httpServer.listen(PORT_HTTP);
 
   if (config.SERVER.force_https) {
-    _logger.debug('Force HTTPS enabled.')
+    log.debug('Enforcing secure connections.');
     const httpsServer = https.createServer({
-        cert: fs.readFileSync(config.SERVER.certificate_path),
-        key: fs.readFileSync(config.SERVER.certificate_key_path)
-      }, app);
+      cert: fs.readFileSync(config.SERVER.certificate_path),
+      key: fs.readFileSync(config.SERVER.certificate_key_path)
+    }, app);
     httpsServer.on('connection', socket => socket.setTimeout(KEEP_ALIVE));
     httpsServer.listen(PORT_HTTPS);
     app.use(forceHttps);
@@ -60,7 +64,14 @@ if (config.SERVER.cluster && cluster.isMaster) {
   app.use('/static', express.static(__dirname + '/../static/'));
 
   app.get('/', logRequest, (req, res) => {
-    res.send('Hello World!')
+    domain.asyncFunction().then(results => {
+      log.debug('Finished executing domain logic.', results);
+      res.send(results);
+    }).catch(e => {
+      //TODO add various special scenarios to return different HTTP status codes and/or messages
+      log.error('Oh no!', e);
+      returnServerError(res, e);
+    });
   });
 
   app.use(logRequest, (req, res) => {
@@ -149,7 +160,7 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 process.on('exit', () => {
-  log.fatal('Process is exiting, so long and thanks for all the fish.');
+  log.fatal('Process is exiting, goodbye.');
 });
 
 // Catch Ctrl+C
