@@ -39,11 +39,9 @@ if (cluster.isMaster) {
 
 
 function Logger(componentName) {
-  if (this instanceof Logger) {
-    this.componentName = componentName;
-  } else {
-    return new Logger(componentName);
-  }
+  if (!(this instanceof Logger)) return new Logger(componentName);
+
+  this.componentName = componentName;
 }
 
 Logger.prototype.telemetry = function(message, object) {
