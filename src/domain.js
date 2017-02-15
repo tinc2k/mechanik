@@ -1,9 +1,9 @@
 'use strict';
 
-const helpers = require('./helpers'),
-      Logger = require('./logger');
+const helpers = require('./helpers');
+const Logger = require('./logger');
 
-const log = new Logger('Core');
+
 
 
 const fetchSomething = () => new Promise(resolve => {
