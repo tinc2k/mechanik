@@ -1,25 +1,23 @@
 'use strict';
 
-//require("babel-polyfill");
 
-const fs = require('graceful-fs'),
-  http = require('http'),
-  https = require('https'),
-  parser = require('body-parser'),
-  express = require('express'),
-  cluster = require('cluster'),
-  os = require('os');
+const fs = require('graceful-fs');
+const http = require('http');
+const https = require('https');
+const parser = require('body-parser');
+const express = require('express');
+const cluster = require('cluster');
+const os = require('os');
 
-const config = require('./config'),
-  enums = require('./enums'),
-  Logger = require('./logger');
+const config = require('./config');
+const enums = require('./enums');
 
-const log = new Logger('Core'),
-  CPU_COUNT = os.cpus().length,
-  PORT_HTTP = config.isDevelopment ? 3000 : 80,
-  PORT_HTTPS = 443,
-  KEEP_ALIVE = 300000, // 5 minutes
-  JSON_LIMIT = '1mb'; // default '100kb'
+const log = require('./logger')('Core');
+const CPU_COUNT = os.cpus().length;
+const PORT_HTTP = config.isDevelopment ? 3000 : 80;
+const PORT_HTTPS = 443;
+const KEEP_ALIVE = 300000; // 5 minutes
+const JSON_LIMIT = '1mb'; // default '100kb'
 
 // fake domain logic component
 const domain = require('./domain');  
