@@ -1,14 +1,13 @@
 'use strict';
 
-const winston = require('winston'),
-      cluster = require('cluster'),
-      util = require('util');
+const winston = require('winston');
+const cluster = require('cluster');
 
 const enums = require('./enums');
 
-const LEVELS = { fatal: 0, error: 1, warn: 2, info: 3, debug: 4, verbose: 5, telemetry: 6 },
-      COLORS = { fatal: 'red', error: 'red', warn: 'yellow', info: 'gray', debug: 'green', verbose: 'blue', telemetry: 'cyan' },
-      FIVE_MEGS = 5242880;
+const LEVELS = { fatal: 0, error: 1, warn: 2, info: 3, debug: 4, verbose: 5, telemetry: 6 };
+const COLORS = { fatal: 'red', error: 'red', warn: 'yellow', info: 'gray', debug: 'green', verbose: 'blue', telemetry: 'cyan' };
+const FIVE_MEGS = 5242880;
 
 var _logger = null;
 
@@ -40,7 +39,11 @@ if (cluster.isMaster) {
 
 
 function Logger(componentName) {
-  this.componentName = componentName;
+  if (this instanceof Logger) {
+    this.componentName = componentName;
+  } else {
+    return new Logger(componentName);
+  }
 }
 
 Logger.prototype.telemetry = function(message, object) {
