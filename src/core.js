@@ -1,16 +1,15 @@
 'use strict';
 
-
+const os = require('os');
 const fs = require('graceful-fs');
 const http = require('http');
 const https = require('https');
 const parser = require('body-parser');
 const express = require('express');
 const cluster = require('cluster');
-const os = require('os');
 
-const config = require('./config');
 const enums = require('./enums');
+const config = require('./config');
 
 const log = require('./logger')('Core');
 const CPU_COUNT = os.cpus().length;
