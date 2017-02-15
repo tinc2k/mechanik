@@ -1,15 +1,12 @@
 'use strict';
 
 const development = {
-  // for config.isDevelopment
-  isDevelopment: true,
+  isDevelopment: true, // for config.isDevelopment
   SERVER: {
-    api_version: 0.01,
-    // enable server clustering
-    cluster: true,
-    // force/redirect to HTTPS
-    force_https: false
-    // certificate paths not required, as development environment doesn't run in HTTPS
+    api_version: 0.01, 
+    cluster: true, // enable server clustering
+    force_https: false // force/redirect to HTTPS
+    // certificate paths are not required, as (local) development environment doesn't run in HTTPS
   },
   REDIS: { 
     host: 'localhost',
@@ -28,7 +25,7 @@ const integration = {
   isIntegration: true, // for config.isIntegration
   SERVER: {
     api_version: 0.01,
-    cluster: true,
+    cluster: true, // enable server clustering
     force_https: true,
     certificate_path: 'certs/int/fullchain.pem',
     certificate_key_path: 'certs/int/privkey.pem'
