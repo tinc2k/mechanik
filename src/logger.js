@@ -1,7 +1,8 @@
 'use strict';
 
-const winston = require('winston');
 const cluster = require('cluster');
+
+const winston = require('winston');
 
 const enums = require('./enums');
 
@@ -79,22 +80,22 @@ function raw(component, level, message, object) {
   // if master, use _logger's transports directly
   if (cluster.isMaster) {
     switch (level) {
-    case 'telemetry':
-      return _logger.telemetry(`[${component}] ${message}`, object ? object : null);
-    case 'verbose':
-      return _logger.verbose(`[${component}] ${message}`, object ? object : null);
-    case 'debug':
-      return _logger.debug(`[${component}] ${message}`, object ? object : null);
-    case 'info':
-      return _logger.info(`[${component}] ${message}`, object ? object : null);
-    case 'warn':
-      return _logger.warn(`[${component}] ${message}`, object ? object : null);
-    case 'error':
-      return _logger.error(`[${component}] ${message}`, object ? object : null);
-    case 'fatal':
-      return _logger.fatal(`[${component}] ${message}`, object ? object : null);
-    default:
-      return _logger.debug(`[${component}] ${message}`, object ? object : null);
+      case 'telemetry':
+        return _logger.telemetry(`[${component}] ${message}`, object ? object : null);
+      case 'verbose':
+        return _logger.verbose(`[${component}] ${message}`, object ? object : null);
+      case 'debug':
+        return _logger.debug(`[${component}] ${message}`, object ? object : null);
+      case 'info':
+        return _logger.info(`[${component}] ${message}`, object ? object : null);
+      case 'warn':
+        return _logger.warn(`[${component}] ${message}`, object ? object : null);
+      case 'error':
+        return _logger.error(`[${component}] ${message}`, object ? object : null);
+      case 'fatal':
+        return _logger.fatal(`[${component}] ${message}`, object ? object : null);
+      default:
+        return _logger.debug(`[${component}] ${message}`, object ? object : null);
     }
   }
 
