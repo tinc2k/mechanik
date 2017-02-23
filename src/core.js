@@ -14,11 +14,13 @@ const config = require('./config');
 
 const log = require('./logger')('Core');
 
+
 const CPU_COUNT = os.cpus().length;
 const PORT_HTTP = config.isDevelopment ? 3000 : 80;
 const PORT_HTTPS = 443;
 const KEEP_ALIVE = 300000; // 5 minutes
 const JSON_LIMIT = '1mb'; // default '100kb'
+const STATIC_ROOT = path.join(__dirname, '../static');
 
 // fake domain logic component
 const domain = require('./domain');
@@ -40,7 +42,7 @@ if (config.Server.cluster && cluster.isMaster) {
   if (config.isDevelopment) {
     // nice tidy JSON output, for better readability in dev
     app.set('json spaces', 2);
-    // disable jade(pug) minification
+    // disable pug minification
     app.locals.pretty = true;
   }
 
@@ -79,12 +81,12 @@ if (config.Server.cluster && cluster.isMaster) {
    * FAVICONS
    * https://github.com/audreyr/favicon-cheat-sheet
    */
-  app.use('/favicon.ico', express.static(path.join(__dirname, '../static/images/favicon.ico')));
-  app.use('/apple-touch-icon.png', express.static(path.join(__dirname, '../static/images/apple-touch-icon.png')));
-  app.use('/favicon-32x32.png', express.static(path.join(__dirname, '../static/images/favicon-32x32.png')));
-  app.use('/favicon-16x16.png', express.static(path.join(__dirname, '../static/images/favicon-16x16.png')));
+  app.use('/favicon.ico', express.static(path.join(STATIC_ROOT, 'images/favicon.ico')));
+  app.use('/apple-touch-icon.png', express.static(path.join(STATIC_ROOT, 'images/apple-touch-icon.png')));
+  app.use('/favicon-32x32.png', express.static(path.join(STATIC_ROOT, 'images/favicon-32x32.png')));
+  app.use('/favicon-16x16.png', express.static(path.join(STATIC_ROOT, 'images/favicon-16x16.png')));
 
-  app.use(express.static(path.join(__dirname, '../static/')));
+  app.use('/static', express.static(STATIC_ROOT));
 
   app.use(logRequest, (req, res) => {
     returnNotFound(res);
@@ -119,37 +121,37 @@ function forceHttps(req, res, next) {
 }
 
 function returnBadRequest(res, message) {
-  res.status(400).send(message ? message : 'Bad request.\n');
+  res.status(400).send(message ? message : 'Bad request.');
   log.warn('Returned 400 Bad Request.', message);
 }
 
 function returnUnauthorized(res, message) {
-  res.status(401).send(message ? message : 'Unauthorized.\n');
+  res.status(401).send(message ? message : 'Unauthorized.');
   log.warn('Returned 401 Unauthorized.', message);
 }
 
 function returnNotFound(res, message) {
-  res.status(404).send(message ? message : 'Not found.\n');
+  res.status(404).send(message ? message : 'Not found.');
   log.warn('Returned 404 Not Found.', message);
 }
 
 function returnTooLarge(res, message) {
-  res.status(413).send(message ? message : 'Payload too large.\n');
+  res.status(413).send(message ? message : 'Payload too large.');
   log.warn('Returned 413 Payload Too Large.', message);
 }
 
 function returnNotImplemented(res, message) {
-  res.status(501).send(message ? message : 'Not implemented.\n');
+  res.status(501).send(message ? message : 'Not implemented.');
   log.warn('Returned 501 Not Implemented.', message);
 }
 
 function returnServerError(res, message) {
-  res.status(500).send(message ? message : 'Server error.\n');
+  res.status(500).send(message ? message : 'Server error.');
   log.warn('Returned 500 Server Error.', message);
 }
 
 function returnServerConflict(res, message) {
-  res.status(409).send(message ? message : 'Server conflict.\n');
+  res.status(409).send(message ? message : 'Server conflict.');
   log.warn('Returned 409 Server Conflict.', message);
 }
 
