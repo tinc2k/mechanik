@@ -4,7 +4,6 @@ const helpers = require('./helpers');
 
 var log = require('./logger')('Domain');
 
-
 const fetchSomething = () => new Promise(resolve => {
   log.debug('Fetching something...');
   setTimeout(() => {
@@ -32,7 +31,7 @@ async function asyncFunction() {
   var something = await fetchSomething(); // returns promise
   var somethingElse = await fetchSomethingUnreliably();
 
-  if(helpers.maybe(33)) {
+  if (helpers.maybe(33)) {
     let m = 'Something terrible had occured in the asyncFunction().';
     log.error(m);
     return Promise.reject(m);

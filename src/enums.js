@@ -15,7 +15,6 @@ const Worker = {
   }
 };
 
-
 module.exports = {
   Message,
   Worker
