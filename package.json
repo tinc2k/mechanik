@@ -5,7 +5,8 @@
   "main": "build/core.js",
   "scripts": {
     "start": "node build/core.js",
-    "build": "rm -rf build/* && babel src --source-maps --out-dir build"
+    "build": "rm -rf build/* && babel src --source-maps --out-dir build",
+    "test": "xo"
   },
   "repository": {
     "type": "git",
@@ -22,6 +23,8 @@
     "express": "^4.14.0",
     "graceful-fs": "^4.1.11",
     "https": "^1.0.0",
+    "pug": "^2.0.0-beta11",
+    "react": "^15.4.2",
     "underscore": "^1.8.3",
     "winston": "^2.3.0"
   },
@@ -30,6 +33,7 @@
     "babel-plugin-transform-react-jsx": "^6.22.0",
     "babel-preset-es2017": "^6.22.0",
     "babel-preset-react": "^6.22.0",
-    "eslint": "^3.15.0"
+    "eslint": "^3.15.0",
+    "xo": "^0.17.1"
   }
 }
