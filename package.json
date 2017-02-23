@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node build/core.js",
     "build": "rm -rf build/* && babel src --source-maps --out-dir build",
-    "test": "xo"
+    "test": "xo --space --plugin=react"
   },
   "repository": {
     "type": "git",
