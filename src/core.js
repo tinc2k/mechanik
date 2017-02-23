@@ -1,17 +1,19 @@
 'use strict';
 
 const os = require('os');
-const fs = require('graceful-fs');
+const path = require('path');
 const http = require('http');
 const https = require('https');
-const parser = require('body-parser');
-const express = require('express');
 const cluster = require('cluster');
+const parser = require('body-parser');
+const fs = require('graceful-fs');
+const express = require('express');
 
 const enums = require('./enums');
 const config = require('./config');
 
 const log = require('./logger')('Core');
+
 const CPU_COUNT = os.cpus().length;
 const PORT_HTTP = config.isDevelopment ? 3000 : 80;
 const PORT_HTTPS = 443;
@@ -19,21 +21,21 @@ const KEEP_ALIVE = 300000; // 5 minutes
 const JSON_LIMIT = '1mb'; // default '100kb'
 
 // fake domain logic component
-const domain = require('./domain');  
+const domain = require('./domain');
 
-
-if (config.SERVER.cluster && cluster.isMaster) {
+if (config.Server.cluster && cluster.isMaster) {
   log.info(`Cluster mode enabled, spawning ${CPU_COUNT} workers.`);
   for (let i = 0; i < CPU_COUNT; i++) {
     cluster.fork();
-  } 
+  }
   cluster.on('message', onWorkerMessage);
   cluster.on('online', onWorkerOnline);
   cluster.on('exit', onWorkerExit);
 } else {
   var app = express();
-  app.use(parser.urlencoded({ extended: true }));
-  app.use(parser.json({ limit: JSON_LIMIT }));
+  app.use(parser.urlencoded({extended: true}));
+  app.use(parser.json({limit: JSON_LIMIT}));
+  app.set('view engine', 'pug');
 
   if (config.isDevelopment) {
     // nice tidy JSON output, for better readability in dev
@@ -46,30 +48,43 @@ if (config.SERVER.cluster && cluster.isMaster) {
   httpServer.on('connection', socket => socket.setTimeout(KEEP_ALIVE));
   httpServer.listen(PORT_HTTP);
 
-  if (config.SERVER.force_https) {
+  if (config.Server.force_https) {
     log.debug('Enforcing secure connections.');
     const httpsServer = https.createServer({
-      cert: fs.readFileSync(config.SERVER.certificate_path),
-      key: fs.readFileSync(config.SERVER.certificate_key_path)
+      cert: fs.readFileSync(config.Server.certificate_path),
+      key: fs.readFileSync(config.Server.certificate_key_path)
     }, app);
     httpsServer.on('connection', socket => socket.setTimeout(KEEP_ALIVE));
     httpsServer.listen(PORT_HTTPS);
     app.use(forceHttps);
   }
 
-  // isn't this a neat little path trick?
-  app.use('/static', express.static(__dirname + '/../static/'));
 
   app.get('/', logRequest, (req, res) => {
+    res.render('index', { title: 'Hey', message: 'Hello there!' });
+  });
+
+  app.get('/async', logRequest, (req, res) => {
     domain.asyncFunction().then(results => {
       log.debug('Finished executing domain logic.', results);
       res.send(results);
-    }).catch(e => {
-      //TODO add various special scenarios to return different HTTP status codes and/or messages
-      log.error('Oh no!', e);
-      returnServerError(res, e);
+    }).catch(err => {
+      // TODO add various special scenarios to return different HTTP status codes and/or messages
+      log.error('Oh no!', err);
+      returnServerError(res, err);
     });
   });
+
+  /**
+   * FAVICONS
+   * https://github.com/audreyr/favicon-cheat-sheet
+   */
+  app.use('/favicon.ico', express.static(path.join(__dirname, '../static/images/favicon.ico')));
+  app.use('/apple-touch-icon.png', express.static(path.join(__dirname, '../static/images/apple-touch-icon.png')));
+  app.use('/favicon-32x32.png', express.static(path.join(__dirname, '../static/images/favicon-32x32.png')));
+  app.use('/favicon-16x16.png', express.static(path.join(__dirname, '../static/images/favicon-16x16.png')));
+
+  app.use(express.static(path.join(__dirname, '../static/')));
 
   app.use(logRequest, (req, res) => {
     returnNotFound(res);
@@ -77,11 +92,11 @@ if (config.SERVER.cluster && cluster.isMaster) {
 }
 
 function onWorkerMessage(worker, message, handle) {
-  //log.verbose('Received IPC message from worker.', { pid: worker.process.pid, message, handle });
+  // log.verbose('Received IPC message from worker.', { pid: worker.process.pid, message, handle });
   if (message.type === enums.Message.Type.Log) {
     log.raw(message.payload.component, message.payload.level, message.payload.message, message.payload.object);
   } else {
-    log.warn('Received strange message from worker, revolution might be underway.', { pid: worker.process.pid, worker, message, handle });
+    log.warn('Received strange message from worker, revolution might be underway.', {pid: worker.process.pid, worker, message, handle});
   }
 }
 
@@ -95,10 +110,12 @@ function onWorkerExit(worker, code, signal) {
 }
 
 function forceHttps(req, res, next) {
-  if(!req.secure) {
-    res.writeHead(301, { 'Location': `https://${req.headers.host}${req.url}` });
+  if (req.secure) {
+    next();
+  } else {
+    res.writeHead(301, {Location: `https://${req.headers.host}${req.url}`});
     res.end();
-  } else next();
+  }
 }
 
 function returnBadRequest(res, message) {
@@ -139,7 +156,7 @@ function returnServerConflict(res, message) {
 function logRequest(req, res, next) {
   log.telemetry('Request received.', {
     path: req.path,
-    method: req.method !== 'GET' ? req.method : undefined,
+    method: req.method === 'GET' ? undefined : req.method,
     query: Object.keys(req.query).length > 0 ? req.query : undefined,
     body: req.body,
     ip: req.ip
@@ -153,7 +170,7 @@ process.on('uncaughtException', e => {
 });
 
 process.on('unhandledRejection', (reason, promise) => {
-  log.error('Unhandled rejection.', { reason, promise });
+  log.error('Unhandled rejection.', {reason, promise});
 });
 
 process.on('exit', () => {

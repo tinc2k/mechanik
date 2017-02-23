@@ -2,17 +2,17 @@
 
 const development = {
   isDevelopment: true, // for config.isDevelopment
-  SERVER: {
-    api_version: 0.01,
+  Server: {
+    apiVersion: 0.01,
     cluster: true, // enable server clustering
-    force_https: false // force/redirect to HTTPS
+    forceHttps: false // force/redirect to HTTPS
     // certificate paths are not required, as (local) development environment doesn't run in HTTPS
   },
-  REDIS: {
+  Redis: {
     host: 'localhost',
     port: 6379
   },
-  POSTGRES: {
+  Postgres: {
     host: 'localhost',
     port: 5432,
     database: '',
@@ -23,18 +23,18 @@ const development = {
 
 const integration = {
   isIntegration: true, // for config.isIntegration
-  SERVER: {
-    api_version: 0.01,
+  Server: {
+    apiVersion: 0.01,
     cluster: true, // enable server clustering
-    force_https: true,
-    certificate_path: 'certs/int/fullchain.pem',
-    certificate_key_path: 'certs/int/privkey.pem'
+    forceHttps: true,
+    certificatePath: 'certs/int/fullchain.pem',
+    certificateKeyPath: 'certs/int/privkey.pem'
   },
-  REDIS: {
+  Redis: {
     host: 'localhost',
     port: 6379
   },
-  POSTGRES: {
+  Postgres: {
     host: 'localhost',
     port: 5432,
     database: '',
@@ -45,18 +45,18 @@ const integration = {
 
 const production = {
   isProduction: true, // for config.isProduction
-  SERVER: {
-    api_version: 0.01,
+  Server: {
+    apiVersion: 0.01,
     cluster: true,
-    force_https: true,
-    certificate_path: 'certs/prod/fullchain.pem',
-    certificate_key_path: 'certs/prod/privkey.pem'
+    forceHttps: true,
+    certificatePath: 'certs/prod/fullchain.pem',
+    certificateKeyPath: 'certs/prod/privkey.pem'
   },
-  REDIS: {
+  Redis: {
     host: 'localhost',
     port: 6379
   },
-  POSTGRES: {
+  Postgres: {
     host: 'localhost',
     port: 5432,
     database: '',
