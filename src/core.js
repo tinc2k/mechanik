@@ -11,9 +11,7 @@ const express = require('express');
 
 const enums = require('./enums');
 const config = require('./config');
-
 const log = require('./logger')('Core');
-
 
 const CPU_COUNT = os.cpus().length;
 const PORT_HTTP = config.isDevelopment ? 3000 : 80;
@@ -32,17 +30,19 @@ if (config.Server.cluster && cluster.isMaster) {
   }
   cluster.on('message', onWorkerMessage);
   cluster.on('online', onWorkerOnline);
-  cluster.on('exit', onWorkerExit);
+  cluster.on('exit', onWorkerDeath);
 } else {
   var app = express();
+  // use qs as querystring parser
   app.use(parser.urlencoded({extended: true}));
+  // parse JSON payloads
   app.use(parser.json({limit: JSON_LIMIT}));
   app.set('view engine', 'pug');
 
   if (config.isDevelopment) {
-    // nice tidy JSON output, for better readability in dev
+    // pretty JSON response (disable JSON minification)
     app.set('json spaces', 2);
-    // disable pug minification
+    // pretty HTTP response (disable pug/HTML minification)
     app.locals.pretty = true;
   }
 
@@ -53,44 +53,36 @@ if (config.Server.cluster && cluster.isMaster) {
   if (config.Server.force_https) {
     log.debug('Enforcing secure connections.');
     const httpsServer = https.createServer({
-      cert: fs.readFileSync(config.Server.certificate_path),
-      key: fs.readFileSync(config.Server.certificate_key_path)
+      cert: fs.readFileSync(config.Server.certificatePath),
+      key: fs.readFileSync(config.Server.certificateKeyPath)
     }, app);
     httpsServer.on('connection', socket => socket.setTimeout(KEEP_ALIVE));
     httpsServer.listen(PORT_HTTPS);
     app.use(forceHttps);
   }
 
-
   app.get('/', logRequest, (req, res) => {
-    res.render('index', { title: 'Hey', message: 'Hello there!' });
+    res.render('index', {title: 'mechanik', content: 'mechanik content'});
   });
 
   app.get('/async', logRequest, (req, res) => {
     domain.asyncFunction().then(results => {
-      log.debug('Finished executing domain logic.', results);
-      res.send(results);
+      log.verbose('Domain method done.', results);
+      res.json(results);
     }).catch(err => {
-      // TODO add various special scenarios to return different HTTP status codes and/or messages
-      log.error('Oh no!', err);
+      log.error('Error executing domain method.', err);
       returnServerError(res, err);
     });
   });
 
-  /**
-   * FAVICONS
-   * https://github.com/audreyr/favicon-cheat-sheet
-   */
   app.use('/favicon.ico', express.static(path.join(STATIC_ROOT, 'images/favicon.ico')));
   app.use('/apple-touch-icon.png', express.static(path.join(STATIC_ROOT, 'images/apple-touch-icon.png')));
   app.use('/favicon-32x32.png', express.static(path.join(STATIC_ROOT, 'images/favicon-32x32.png')));
   app.use('/favicon-16x16.png', express.static(path.join(STATIC_ROOT, 'images/favicon-16x16.png')));
-
   app.use('/static', express.static(STATIC_ROOT));
 
-  app.use(logRequest, (req, res) => {
-    returnNotFound(res);
-  });
+  // if none of the above, 404
+  app.use(logRequest, (req, res) => returnNotFound(res, null, req));
 }
 
 function onWorkerMessage(worker, message, handle) {
@@ -103,11 +95,11 @@ function onWorkerMessage(worker, message, handle) {
 }
 
 function onWorkerOnline(worker) {
-  log.info(`Worker ${worker.process.pid} is online.`);
+  log.info(`Worker ${worker.process.pid} went online.`);
 }
 
-function onWorkerExit(worker, code, signal) {
-  log.warn(`Worker ${worker.process.pid} died with ${signal}. Restarting...`);
+function onWorkerDeath(worker, code, signal) {
+  log.warn(`Worker ${worker.process.pid} died with ${signal}. Respawning...`);
   cluster.fork();
 }
 
@@ -130,9 +122,10 @@ function returnUnauthorized(res, message) {
   log.warn('Returned 401 Unauthorized.', message);
 }
 
-function returnNotFound(res, message) {
-  res.status(404).send(message ? message : 'Not found.');
-  log.warn('Returned 404 Not Found.', message);
+function returnNotFound(res, message, req) {
+  message = message ? message : 'Not found.';
+  res.status(404).send(message);
+  log.warn('Returned 404 Not Found.', {message, path: req ? req.path : undefined});
 }
 
 function returnTooLarge(res, message) {
@@ -166,11 +159,12 @@ function logRequest(req, res, next) {
   next();
 }
 
-// TODO https://nodejs.org/api/process.html
+// https://nodejs.org/api/process.html
 process.on('uncaughtException', e => {
   log.error('Uncaught exception.', e);
 });
 
+// https://nodejs.org/api/process.html#process_warning_using_uncaughtexception_correctly
 process.on('unhandledRejection', (reason, promise) => {
   log.error('Unhandled rejection.', {reason, promise});
 });
@@ -179,7 +173,6 @@ process.on('exit', () => {
   log.fatal('Process is exiting, goodbye.');
 });
 
-// Catch Ctrl+C
 process.on('SIGINT', () => {
   log.warn('Got SIGINT. Exiting...');
   process.exit();
