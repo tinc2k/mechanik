@@ -1,5 +1,24 @@
+doctype html
 html
   head
+    meta(charset='utf-8')
+    meta(name='viewport' content='width=device-width, initial-scale=1.0')
     title= title
+    link(rel='stylesheet' type='text/css' href='/static/styles/main.css')
+    link(rel='stylesheet' type='text/css' href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700')
+
+    link(rel="apple-touch-icon", sizes="180x180", href="/apple-touch-icon.png?v=3")
+    link(rel="icon", href="/favicon.ico", sizes="32x32")
+    link(rel="icon", type="image/png", href="/favicon-32x32.png", sizes="32x32")
+    link(rel="icon", type="image/png", href="/favicon-16x16.png", sizes="16x16")
+
   body
-    h1= message
+    #wrapper!= content
+
+    //- script(src='/static/client.js')
+    //- script(src='/static/defer.js' defer)
+    //- script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js' defer)
+
+    script.
+      var rootUrl = window.location.host;
+      console.log('Loaded.'rootUrl);
