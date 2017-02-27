@@ -10,7 +10,8 @@ const fs = require('graceful-fs');
 const express = require('express');
 
 const enums = require('./enums');
-const config = require('./config');
+const config = require('./config')(process.env.NODE_ENV);
+
 const log = require('./logger')('Core');
 
 const CPU_COUNT = os.cpus().length;

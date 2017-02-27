@@ -15,9 +15,10 @@ const development = {
   Postgres: {
     host: 'localhost',
     port: 5432,
-    database: '',
-    user: '',
-    password: ''
+    database: 'mechanik',
+    user: 'mechanik',
+    password: '',
+    pool: { min: 2, max: 10 }, // default { min: 2, max: 10 }
   }
 };
 
@@ -37,9 +38,10 @@ const integration = {
   Postgres: {
     host: 'localhost',
     port: 5432,
-    database: '',
-    user: '',
-    password: ''
+    database: 'mechanik',
+    user: 'mechanik',
+    password: '',
+    pool: { min: 2, max: 10 }, // default { min: 2, max: 10 }
   }
 };
 
@@ -59,16 +61,19 @@ const production = {
   Postgres: {
     host: 'localhost',
     port: 5432,
-    database: '',
-    user: '',
-    password: ''
+    database: 'mechanik',
+    user: 'mechanik',
+    password: '',
+    pool: { min: 2, max: 10 }, // default { min: 2, max: 10 }
   }
 };
 
-if (process.env.NODE_ENV === 'production')	{
-  module.exports = production;
-} else if (process.env.NODE_ENV === 'integration')	{
-  module.exports = integration;
-} else {
-  module.exports = development;
-}
+module.exports = function(environment) {
+  if (environment === 'production') {
+    return production;
+  } else if (environment === 'integration' || environment === 'staging') {
+    return integration;
+  } else {
+    return development;
+  }
+};
