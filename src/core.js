@@ -25,12 +25,15 @@ const domain = require('./domain');
 
 if (config.Server.cluster && cluster.isMaster) {
   log.info(`Cluster mode enabled, spawning ${CPU_COUNT} workers.`);
-  for (let i = 0; i < CPU_COUNT; i++) {
-    cluster.fork();
-  }
+  // attach event handlers
   cluster.on('message', onWorkerMessage);
   cluster.on('online', onWorkerOnline);
   cluster.on('exit', onWorkerDeath);
+  // spawn workers
+  for (let i = 0; i < CPU_COUNT; i++) {
+    cluster.fork();
+  }
+
 } else {
   var app = express();
   // use qs as querystring parser
