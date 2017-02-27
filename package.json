@@ -20,9 +20,12 @@
   "homepage": "https://github.com/tinc2k/mechanik#readme",
   "dependencies": {
     "body-parser": "^1.16.0",
+    "bookshelf": "^0.10.3",
     "express": "^4.14.0",
     "graceful-fs": "^4.1.11",
     "https": "^1.0.0",
+    "knex": "^0.12.7",
+    "moment-timezone": "^0.5.11",
     "pug": "^2.0.0-beta11",
     "react": "^15.4.2",
     "underscore": "^1.8.3",
