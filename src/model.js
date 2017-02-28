@@ -3,10 +3,7 @@
 const crypto = require('crypto');
 const moment = require('moment-timezone');
 
-const log = require('./logger')('Model');
-const helpers = require('./helpers');
 const config = require('./config')(process.env.NODE_ENV);
-
 const knex = require('knex')({
   client: 'postgresql',
   connection: {
@@ -18,17 +15,17 @@ const knex = require('knex')({
   },
   pool: config.Postgres.pool,
   migrations: { tableName: 'knex_migrations'}
-  //debug: true
+  // debug: true
 });
+const helpers = require('./helpers');
+const log = require('./logger')('Model');
 const bookshelf = require('bookshelf')(knex);
-
 
 // https://github.com/tgriesser/bookshelf/wiki/Plugin:-Virtuals
 bookshelf.plugin('virtuals');
 
 // https://github.com/tgriesser/bookshelf/wiki/Plugin:-Visibility
 bookshelf.plugin('visibility');
-
 
 const Enums = {
   Role: {
@@ -41,7 +38,7 @@ const Enums = {
 var User = bookshelf.Model.extend({
   tableName: 'User',
   hasTimestamps: ['createdAt', 'updatedAt'],
-  hidden: ['passwordSalt','passwordHash'],
+  hidden: ['passwordSalt', 'passwordHash'],
   validTokens() {
     return this.hasMany(Token, 'userId').query(q => {
       // unexpired tokens only
@@ -64,7 +61,6 @@ var User = bookshelf.Model.extend({
     let str = salt + password;
     log.verbose('Generating password hash.', str);
     let hash = crypto.createHash('sha256').update(str).digest('hex');
-    //_logger.verbose('Generated hash', hash);
     return hash;
   },
   toPublicJSON(i) {
@@ -77,7 +73,6 @@ var User = bookshelf.Model.extend({
     };
   }
 });
-
 
 var Token = bookshelf.Model.extend({
   tableName: 'Token',
@@ -94,7 +89,7 @@ var Token = bookshelf.Model.extend({
 });
 
 module.exports = {
-  Role,
+  Enums,
   User,
   Token
 };
