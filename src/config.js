@@ -18,7 +18,7 @@ const development = {
     database: 'mechanik',
     user: 'mechanik',
     password: '',
-    pool: { min: 2, max: 10 }, // default { min: 2, max: 10 }
+    pool: { min: 2, max: 10 } // default { min: 2, max: 10 }
   }
 };
 
@@ -41,7 +41,7 @@ const integration = {
     database: 'mechanik',
     user: 'mechanik',
     password: '',
-    pool: { min: 2, max: 10 }, // default { min: 2, max: 10 }
+    pool: { min: 2, max: 10 } // default { min: 2, max: 10 }
   }
 };
 
@@ -64,7 +64,7 @@ const production = {
     database: 'mechanik',
     user: 'mechanik',
     password: '',
-    pool: { min: 2, max: 10 }, // default { min: 2, max: 10 }
+    pool: { min: 2, max: 10 } // default { min: 2, max: 10 }
   }
 };
 
