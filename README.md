@@ -4,7 +4,7 @@
 
 * web server in clustered configuration
 * config file w/ development, integration & production environments
-* logging (to console & file) w/ support for clustered
+* logging (to console output & filesystem) w/ support for clustered configuration
 * partial `knex` and `bookshelf` implementation
  * models
 * Docker containers
