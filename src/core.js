@@ -12,7 +12,6 @@ const express = require('express');
 
 const enums = require('./enums');
 const config = require('./config')(process.env.NODE_ENV);
-
 const log = require('./logger')('Core');
 
 const CPU_COUNT = os.cpus().length;
@@ -25,6 +24,7 @@ const STATIC_ROOT = path.join(__dirname, '../static');
 // fake domain logic component
 const domain = require('./domain');
 
+// if running in clustered configuration, and this is the master process
 if (config.Server.cluster && cluster.isMaster) {
   log.info(`Cluster mode enabled, spawning ${CPU_COUNT} workers.`);
   // attach event handlers
@@ -35,11 +35,11 @@ if (config.Server.cluster && cluster.isMaster) {
   for (let i = 0; i < CPU_COUNT; i++) {
     cluster.fork();
   }
-
+// not running in clustered mode, or this is a spawned worker process
 } else {
   var app = express();
   // use qs as querystring parser
-  app.use(parser.urlencoded({extended: true}));
+  app.use(parser.urlencoded({ extended: true }));
   // parse JSON payloads
   app.use(parser.json({limit: JSON_LIMIT}));
   app.set('view engine', 'pug');
@@ -67,19 +67,20 @@ if (config.Server.cluster && cluster.isMaster) {
   }
 
   app.get('/', logRequest, (req, res) => {
-    res.render('index', {title: 'mechanik', content: 'mechanik content'});
+    res.render('index', { title: 'mechanik', content: 'mechanik content' });
   });
 
   app.get('/async', logRequest, (req, res) => {
-    domain.asyncFunction().then(results => {
-      log.verbose('Domain method done.', results);
+    domain.unreliableAsyncFunction().then(results => {
+      log.verbose('Unreliable domain method done.', results);
       res.json(results);
     }).catch(err => {
-      log.error('Error executing domain method.', err);
+      log.error('Error executing unreliable domain method.', err);
       returnServerError(res, err);
     });
   });
 
+  // serve favicons & static files
   app.use('/favicon.ico', express.static(path.join(STATIC_ROOT, 'images/favicon.ico')));
   app.use('/apple-touch-icon.png', express.static(path.join(STATIC_ROOT, 'images/apple-touch-icon.png')));
   app.use('/favicon-32x32.png', express.static(path.join(STATIC_ROOT, 'images/favicon-32x32.png')));
@@ -90,6 +91,9 @@ if (config.Server.cluster && cluster.isMaster) {
   app.use(logRequest, (req, res) => returnNotFound(res, null, req));
 }
 
+/**
+ * Worker message received event handler.
+ */
 function onWorkerMessage(worker, message, handle) {
   // log.verbose('Received IPC message from worker.', { pid: worker.process.pid, message, handle });
   if (message.type === enums.Message.Type.Log) {
@@ -99,60 +103,100 @@ function onWorkerMessage(worker, message, handle) {
   }
 }
 
+/**
+ * Worker online event handler.
+ */
 function onWorkerOnline(worker) {
   log.info(`Worker ${worker.process.pid} went online.`);
 }
 
+/**
+ * Worker death event handler.
+ */
 function onWorkerDeath(worker, code, signal) {
   log.warn(`Worker ${worker.process.pid} died with ${signal}. Respawning...`);
   cluster.fork();
 }
 
+/**
+ * Redirects client to HTTPS version of requested URL.
+ */
 function forceHttps(req, res, next) {
   if (req.secure) {
     next();
   } else {
-    res.writeHead(301, {Location: `https://${req.headers.host}${req.url}`});
+    res.writeHead(301, { Location: `https://${req.headers.host}${req.url}` });
     res.end();
   }
 }
 
+/**
+ * Returns 400 Bad Request response to client.
+ * @param {string} message Optional client message.
+ */
 function returnBadRequest(res, message) {
   res.status(400).send(message ? message : 'Bad request.');
   log.warn('Returned 400 Bad Request.', message);
 }
 
+/**
+ * Returns 401 Unauthorized response to client.
+ * @param {string} message Optional client message.
+ */
 function returnUnauthorized(res, message) {
   res.status(401).send(message ? message : 'Unauthorized.');
   log.warn('Returned 401 Unauthorized.', message);
 }
 
+/**
+ * Returns 404 Not Found response to client.
+ * @param {string} message Optional client message.
+ */
 function returnNotFound(res, message, req) {
   message = message ? message : 'Not found.';
   res.status(404).send(message);
-  log.warn('Returned 404 Not Found.', {message, path: req ? req.path : undefined});
+  log.warn('Returned 404 Not Found.', { message, path: req ? req.path : undefined });
 }
 
+/**
+ * Returns 413 Payload Too Large response to client.
+ * @param {string} message Optional client message.
+ */
 function returnTooLarge(res, message) {
   res.status(413).send(message ? message : 'Payload too large.');
   log.warn('Returned 413 Payload Too Large.', message);
 }
 
+/**
+ * Returns 501 Not Implemented response to client.
+ * @param {string} message Optional client message.
+ */
 function returnNotImplemented(res, message) {
   res.status(501).send(message ? message : 'Not implemented.');
   log.warn('Returned 501 Not Implemented.', message);
 }
 
+/**
+ * Returns 500 Server Error response to client.
+ * @param {string} message Optional client message.
+ */
 function returnServerError(res, message) {
   res.status(500).send(message ? message : 'Server error.');
   log.warn('Returned 500 Server Error.', message);
 }
 
+/**
+ * Returns 409 Server Conflict response to client.
+ * @param {string} message Optional client message.
+ */
 function returnServerConflict(res, message) {
   res.status(409).send(message ? message : 'Server conflict.');
   log.warn('Returned 409 Server Conflict.', message);
 }
 
+/**
+ * Log HTTP request details middleware.
+ */
 function logRequest(req, res, next) {
   log.telemetry('Request received.', {
     path: req.path,
@@ -171,7 +215,7 @@ process.on('uncaughtException', e => {
 
 // https://nodejs.org/api/process.html#process_warning_using_uncaughtexception_correctly
 process.on('unhandledRejection', (reason, promise) => {
-  log.error('Unhandled rejection.', {reason, promise});
+  log.error('Unhandled rejection.', { reason, promise });
 });
 
 process.on('exit', () => {
