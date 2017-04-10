@@ -46,7 +46,6 @@ describe('Helpers', () => {
       assert.equal(helpers.validateInt('ᶆ@ᶊᶊ1▼Έ Ćü©üṃḇéᴙ$ 🥒'), false);
       assert.equal(helpers.validateInt(HUGE), true);
       assert.equal(helpers.validateInt(-HUGE, true, true, true), true);
-      assert.equal(helpers.validateInt(-1, true, true, true), true);
     });
     it('should correctly validate floats.', () => {
       assert.equal(helpers.validateFloat(undefined), false);
@@ -67,7 +66,6 @@ describe('Helpers', () => {
       assert.equal(helpers.validateFloat('ᶆ@ᶊᶊ1▼Έ Ćü©üṃḇéᴙ$ 🥒'), false);
       assert.equal(helpers.validateFloat(HUGE), true);
       assert.equal(helpers.validateFloat(-HUGE, true, true, true), true);
-      assert.equal(helpers.validateFloat(-1, true, true, true), true);
     });
   });
 });

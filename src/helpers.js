@@ -54,7 +54,7 @@ function validateString(value, required = true) {
   } else {
     // since string is not required, allow nulls or (empty) strings
     if (value === null || typeof value === 'string') {
-      //all checks passed
+      // all checks passed
       return true;
     }
     return false;
