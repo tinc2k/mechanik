@@ -1,4 +1,14 @@
-# mechanik
+# `mechanik`
+
+`mechanik` is a *work-in-progress* ES7/Node/React/Docker app stack running on single Docker host instances.
+
+## basic usage
+
+```
+npm run build
+npm run test
+npm run start
+```
 
 ## features
 
