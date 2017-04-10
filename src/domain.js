@@ -28,7 +28,13 @@ const fetchSomethingUnreliably = () => new Promise((resolve, reject) => {
 
 async function asyncFunction() {
   log.debug('asyncFunction() called.');
-  var something = await fetchSomething(); // returns promise
+  var something = await fetchSomething(); // returns Promise
+  return something;
+}
+
+async function unreliableAsyncFunction() {
+  log.debug('unreliableAsyncFunction() called.');
+  var something = await fetchSomething(); // returns Promise
   var somethingElse = await fetchSomethingUnreliably();
 
   if (helpers.maybe(33)) {
@@ -42,5 +48,6 @@ async function asyncFunction() {
 }
 
 module.exports = {
-  asyncFunction
+  asyncFunction,
+  unreliableAsyncFunction
 };
