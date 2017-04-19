@@ -32,6 +32,7 @@ npm run start
 * fully implement `knex` and `bookshelf`
   * migrations
 * implement front-end standalone `socket.io` client
+* `s3` module/support
 * moar testing
 * ~~figure out if `xo` is a good idea~~ it's not
 * figure out if `flow` is a good idea
