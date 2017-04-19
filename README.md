@@ -15,6 +15,7 @@ npm run start
 * web server in clustered configuration
 * config file w/ development, integration & production environments
 * logging (to stdout & filesystem) w/ support for clustered Node configuration
+* some mocha support
 * partial `knex` and `bookshelf` implementation
   * models
 * Docker containers
@@ -32,8 +33,7 @@ npm run start
   * migrations
 * implement front-end standalone `socket.io` client
 * testing
-* figure out if `xo` is a good idea
+* ~~figure out if `xo` is a good idea~~ it's not
 * figure out if `flow` is a good idea
-* write a couple (`mocha`?) tests
 * rudimentary API limiter middleware
 * Apple push notifications module
