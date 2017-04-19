@@ -1,6 +1,6 @@
 # `mechanik`
 
-`mechanik` is a *work-in-progress* ES7/Node/React/Docker app stack running on single Docker host instances.
+`mechanik` is a *work-in-progress* ES7/Express/React/Docker app stack running on single Docker host instances.
 
 ## basic usage
 
@@ -14,9 +14,9 @@ npm run start
 
 * web server in clustered configuration
 * config file w/ development, integration & production environments
-* logging (to console output & filesystem) w/ support for clustered configuration
+* logging (to stdout & filesystem) w/ support for clustered Node configuration
 * partial `knex` and `bookshelf` implementation
- * models
+  * models
 * Docker containers
   * redis
   * postgres
