@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node build/core.js",
     "build": "rm -rf build/* && babel src --source-maps --out-dir build",
-    "test": "rm -rf build/* && babel src --source-maps --out-dir build && mocha",
+    "test": "mocha",
     "flow": "node_modules/.bin/flow check"
   },
   "repository": {
@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/tinc2k/mechanik#readme",
   "dependencies": {
+    "bluebird": "^3.5.0",
     "body-parser": "^1.16.0",
     "bookshelf": "^0.10.3",
     "express": "^4.14.0",
@@ -29,6 +30,7 @@
     "moment-timezone": "^0.5.11",
     "pug": "^2.0.0-beta11",
     "react": "^15.4.2",
+    "redis": "^2.7.1",
     "underscore": "^1.8.3",
     "winston": "^2.3.0"
   },
