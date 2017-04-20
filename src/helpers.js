@@ -125,10 +125,74 @@ function validateFloat(value, required = true, allowZero = true, allowNegative =
   return true;
 }
 
+//TODO write tests
+function validateObject(value, required = true, allowBlank = false) {
+  // don't allow undefined values or Arrays
+  if (value === undefined) {
+    return false;
+  }
+  if (typeof value === 'object') {
+    // don't allow arrays
+    if (value && value.constructor === Array) {
+      return false;
+    }
+    if (required) {
+      // if value is required, don't allow nulls
+      if (value === null) {
+        return false;
+      }
+      // if we don't allow blank objects, check keys
+      if (!allowBlank && Object.keys(value).length === 0) {
+        return false;
+      } else {
+        return true;
+      }
+    } else {
+      return true;
+    }
+  } else {
+    // certainly not an object (or null, because typeof null === 'object')
+    return false;
+  }
+}
+
+//TODO write tests
+function isTreeHealthy(node) {
+  if (node === null || node === false) {
+    //console.log('Node is null or false.', node);
+    return true;
+  } else if (typeof node === 'string') {
+    //console.log('Node is a string.', node);
+    return node.length > 0 ? false : true;
+  } else if (node.constructor === Array) {
+    //console.log('Node is an Array.', node);
+    for (let i = 0; i < node.length; i++) {
+      if (!isTreeHealthy(node[i])) {
+        return false;
+      }
+    }
+    return true;
+  } else if (typeof node === 'object') {
+    //console.log('Node is an object.', node);
+    let keys = Object.keys(node);
+    for (let i = 0; i < keys.length; i++) {
+      if (!isTreeHealthy(node[keys[i]])) {
+        return false;
+      }
+    }
+    return true;
+  } else {
+    console.log('Node is of an unknown type.', node);
+    throw new Error('Node is of an unknown type.');
+  }
+}
+
 module.exports = {
   getRandomHex,
   maybe,
   validateString,
   validateInt,
-  validateFloat
+  validateFloat,
+  validateObject,
+  isTreeHealthy
 };
