@@ -25,6 +25,17 @@ npm run start
 * async/await support
 * `.eslintrc.js` config
 
+## new module
+
+```
+'use strict';
+// fetch configuration for environment
+const config = require('./config')(process.env.NODE_ENV);
+// init logging module
+const log = require('./logger')('Module name goes here');
+
+```
+
 ## todo
 * Docker containers
   * api/web server
