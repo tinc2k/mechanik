@@ -41,7 +41,7 @@ if (config.Server.cluster && cluster.isMaster) {
   // use qs as querystring parser
   app.use(parser.urlencoded({ extended: true }));
   // parse JSON payloads
-  app.use(parser.json({limit: JSON_LIMIT}));
+  app.use(parser.json({ limit: JSON_LIMIT }));
   app.set('view engine', 'pug');
 
   if (config.isDevelopment) {
