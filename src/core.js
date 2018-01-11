@@ -13,6 +13,7 @@ const express = require('express');
 const enums = require('./enums');
 const config = require('./config')(process.env.NODE_ENV);
 const log = require('./logger')('Core');
+const middleware = require('./middleware');
 
 const CPU_COUNT = os.cpus().length;
 const PORT_HTTP = config.isDevelopment ? 3000 : 80;
@@ -76,7 +77,7 @@ if (config.Server.cluster && cluster.isMaster) {
       res.json(results);
     }).catch(err => {
       log.error('Error executing unreliable domain method.', err);
-      returnServerError(res, err);
+      middleware.returnServerError(res, err);
     });
   });
 
@@ -88,7 +89,7 @@ if (config.Server.cluster && cluster.isMaster) {
   app.use('/static', express.static(STATIC_ROOT));
 
   // if none of the above, 404
-  app.use(logRequest, (req, res) => returnNotFound(res, null, req));
+  app.use(logRequest, (req, res) => middleware.returnNotFound(res, null, req));
 }
 
 /**
@@ -128,70 +129,6 @@ function forceHttps(req, res, next) {
     res.writeHead(301, { Location: `https://${req.headers.host}${req.url}` });
     res.end();
   }
-}
-
-/**
- * Returns 400 Bad Request response to client.
- * @param {string} message Optional client message.
- */
-function returnBadRequest(res, message) {
-  res.status(400).send(message ? message : 'Bad request.');
-  log.warn('Returned 400 Bad Request.', message);
-}
-
-/**
- * Returns 401 Unauthorized response to client.
- * @param {string} message Optional client message.
- */
-function returnUnauthorized(res, message) {
-  res.status(401).send(message ? message : 'Unauthorized.');
-  log.warn('Returned 401 Unauthorized.', message);
-}
-
-/**
- * Returns 404 Not Found response to client.
- * @param {string} message Optional client message.
- */
-function returnNotFound(res, message, req) {
-  message = message ? message : 'Not found.';
-  res.status(404).send(message);
-  log.warn('Returned 404 Not Found.', { message, path: req ? req.path : undefined });
-}
-
-/**
- * Returns 413 Payload Too Large response to client.
- * @param {string} message Optional client message.
- */
-function returnTooLarge(res, message) {
-  res.status(413).send(message ? message : 'Payload too large.');
-  log.warn('Returned 413 Payload Too Large.', message);
-}
-
-/**
- * Returns 501 Not Implemented response to client.
- * @param {string} message Optional client message.
- */
-function returnNotImplemented(res, message) {
-  res.status(501).send(message ? message : 'Not implemented.');
-  log.warn('Returned 501 Not Implemented.', message);
-}
-
-/**
- * Returns 500 Server Error response to client.
- * @param {string} message Optional client message.
- */
-function returnServerError(res, message) {
-  res.status(500).send(message ? message : 'Server error.');
-  log.warn('Returned 500 Server Error.', message);
-}
-
-/**
- * Returns 409 Server Conflict response to client.
- * @param {string} message Optional client message.
- */
-function returnServerConflict(res, message) {
-  res.status(409).send(message ? message : 'Server conflict.');
-  log.warn('Returned 409 Server Conflict.', message);
 }
 
 /**
