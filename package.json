@@ -7,7 +7,8 @@
     "start": "node build/core.js",
     "build": "rm -rf build/* && babel src --source-maps --out-dir build",
     "test": "mocha",
-    "flow": "node_modules/.bin/flow check"
+    "flow": "node_modules/.bin/flow check",
+    "webpack": "webpack"
   },
   "repository": {
     "type": "git",
@@ -39,6 +40,7 @@
     "babel-loader": "^7.1.2",
     "babel-plugin-transform-async-to-generator": "^6.24.1",
     "babel-plugin-transform-react-jsx": "^6.24.1",
+    "babel-preset-env": "^1.6.1",
     "babel-preset-es2017": "^6.24.1",
     "babel-preset-react": "^6.24.1",
     "eslint": "^4.15.0",
