@@ -41,6 +41,7 @@
     "babel-preset-react": "^6.24.1",
     "eslint": "^4.15.0",
     "flow-bin": "^0.63.1",
-    "mocha": "^4.1.0"
+    "mocha": "^4.1.0",
+    "webpack": "^3.10.0"
   }
 }
