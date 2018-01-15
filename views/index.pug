@@ -14,11 +14,12 @@ html
 
   body
     #wrapper!= content
+    #app
 
-    //- script(src='/static/client.js')
+    script(src='/static/client.js' defer)
     //- script(src='/static/defer.js' defer)
     //- script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js' defer)
 
     script.
       var rootUrl = window.location.host;
-      console.log('Loaded.'rootUrl);
+      console.log('Loaded.', rootUrl);
