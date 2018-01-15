@@ -1,6 +1,5 @@
 # Babel build
-build/*.js*
-build/components/*.js*
+build/*
 
 # Logs
 logs/*.log
