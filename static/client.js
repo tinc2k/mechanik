@@ -959,8 +959,6 @@ var _ReactComponent2 = _interopRequireDefault(_ReactComponent);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-console.log('did we get here?');
-
 (0, _reactDom.render)(_react2.default.createElement(_ReactComponent2.default, { title: 'Cheers' }), document.getElementById('app'));
 
 /***/ }),
