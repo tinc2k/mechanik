@@ -8,7 +8,8 @@
     "build": "rm -rf build/* && babel src --source-maps --out-dir build",
     "test": "mocha",
     "flow": "node_modules/.bin/flow check",
-    "webpack": "webpack"
+    "webpack": "webpack",
+    "stylus": "stylus -w stylus -o static/styles"
   },
   "repository": {
     "type": "git",
