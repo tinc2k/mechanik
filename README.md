@@ -25,6 +25,17 @@ npm run start
 * async/await support
 * `.eslintrc.js` config
 
+## new module
+
+```
+'use strict';
+// fetch configuration for environment
+const config = require('./config')(process.env.NODE_ENV);
+// init logging module
+const log = require('./logger')('Module name goes here');
+
+```
+
 ## todo
 * Docker containers
   * api/web server
@@ -37,4 +48,11 @@ npm run start
 * ~~figure out if `xo` is a good idea~~ it's not
 * figure out if `flow` is a good idea
 * rudimentary API limiter middleware
-* Apple push notifications module
+* advanced logging
+  * external centralized logging service/container?
+  * should this be part of monitor? perhaps monitor should be split up into client/server modules
+  * ...in streams...
+* messenger module
+  * Apple Push Notifications
+  * Facebook Messenger?
+

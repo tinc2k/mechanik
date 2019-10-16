@@ -1,0 +1,15 @@
+FROM debian:jessie
+MAINTAINER tinc2k@gmail.com
+
+apt-get update && apt-get install -y git git-core curl build-essential postgresql libpq-dev &&\
+curl -sL https://deb.nodesource.com/setup_7.x | bash - && apt-get install -y nodejs &&\
+npm install -g knex stylus
+
+ADD . /api
+
+WORKDIR /api
+
+RUN npm install && npm run build
+CMD npm run prod
+
+EXPOSE 80 443

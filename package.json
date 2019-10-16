@@ -7,7 +7,9 @@
     "start": "node build/core.js",
     "build": "rm -rf build/* && babel src --source-maps --out-dir build",
     "test": "mocha",
-    "flow": "node_modules/.bin/flow check"
+    "flow": "node_modules/.bin/flow check",
+    "webpack": "webpack",
+    "stylus": "stylus -w stylus -o static/styles"
   },
   "repository": {
     "type": "git",
@@ -20,28 +22,32 @@
   },
   "homepage": "https://github.com/tinc2k/mechanik#readme",
   "dependencies": {
-    "bluebird": "^3.5.0",
-    "body-parser": "^1.16.0",
-    "bookshelf": "^0.10.3",
-    "express": "^4.14.0",
+    "bluebird": "^3.5.1",
+    "body-parser": "^1.18.2",
+    "bookshelf": "^0.12.1",
+    "express": "^4.16.2",
     "graceful-fs": "^4.1.11",
     "https": "^1.0.0",
-    "knex": "^0.12.7",
+    "knex": "^0.14.2",
     "moment-timezone": "^0.5.11",
-    "pg": "^7.12.1",
-    "pug": "^2.0.0-beta11",
-    "react": "^15.4.2",
-    "redis": "^2.7.1",
+    "pug": "^2.0.0-rc.4",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "redis": "^2.8.0",
     "underscore": "^1.8.3",
-    "winston": "^2.3.0"
+    "winston": "^2.4.0"
   },
   "devDependencies": {
-    "babel-cli": "^6.22.2",
-    "babel-plugin-transform-react-jsx": "^6.22.0",
-    "babel-preset-es2017": "^6.22.0",
-    "babel-preset-react": "^6.22.0",
-    "eslint": "^3.15.0",
-    "flow-bin": "^0.42.0",
-    "mocha": "^3.2.0"
+    "babel-cli": "^6.24.1",
+    "babel-loader": "^7.1.2",
+    "babel-plugin-transform-async-to-generator": "^6.24.1",
+    "babel-plugin-transform-react-jsx": "^6.24.1",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-es2017": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "eslint": "^4.15.0",
+    "flow-bin": "^0.63.1",
+    "mocha": "^4.1.0",
+    "webpack": "^3.10.0"
   }
 }
